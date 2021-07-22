@@ -53,3 +53,32 @@ code {
 .error-red {
 	border: 2px solid red !important;
 }
+
+ul {
+	list-style: none;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+.m-navbar {
+	display: flex;
+	justify-content: space-between;
+	background-color: lightcoral;
+}
+.m-navbar ul {
+	display: flex;
+}
+.left-nav li {
+	margin-right: 25px;
+}
+.right-nav li {
+	margin-left: 25px;
+}
+.m-sidebar {
+	height: 95vh;
+	display: flex;
+	flex-direction: column;
+	background-color: indianred;
+}
+.sidebar-links {
+	margin-bottom: 20px;
+}

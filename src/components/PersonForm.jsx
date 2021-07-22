@@ -58,10 +58,16 @@ export default function PersonForm(props) {
 		};
 		// createUser();
 	};
-	console.log(errors);
+	const handleBackward = (params) => {
+		props.history.goBack();
+		// props.history.push("/cities");
+	};
 
 	return (
 		<div>
+			<button onClick={handleBackward} className="btn btn-secondary">
+				Back
+			</button>
 			<form
 				onChange={handleFormChange}
 				onSubmit={handleSubmit}
@@ -72,6 +78,7 @@ export default function PersonForm(props) {
 							{error.message}
 						</div>
 					))}
+
 				<div className="mb-3 row">
 					<label for="staticEmail" className="col-sm-2 col-form-label">
 						Name

@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import queryString from "query-string";
 
 function FunCounter(props) {
-	console.log(props.location.search);
-	let queryData = queryString.parse(props.location.search);
-	console.log(queryData);
 	let [count, setCount] = useState(10);
 
 	const increment = () => {

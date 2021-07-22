@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { paginate, sorting } from "./utils/utils";
 import Swal from "sweetalert2";
 import queryString from "query-string";
+import { Link } from "react-router-dom";
 
 let allUsers = [];
 function Persons(props) {
@@ -122,6 +123,9 @@ function Persons(props) {
 						placeholder="Search the users"
 					/>
 				</div>
+				<Link to="/persons/new">
+					<button className="btn btn-primary ml-auto">New Person +</button>
+				</Link>
 
 				<table className="table m-table">
 					<thead>

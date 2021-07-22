@@ -1,0 +1,7 @@
+.content {
+	display: flex;
+}
+.sidebar-wrap {
+	width: 150px;
+	background-color: indianred;
+}

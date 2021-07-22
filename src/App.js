@@ -11,21 +11,29 @@ import FunCities from "./components/FunCities";
 import Title from "./components/Title";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import Person from "./components/Person";
+import NotFound from "./components/NotFound";
+import Dashboard from "./screens/Dashboard";
 
 function App() {
 	return (
 		<div className="App">
 			<Switch>
-				<Route path="/cities" component={FunCounter} />
+				<Route path="/dashboard" component={Dashboard}></Route>
+				<Route
+					path="/cities"
+					render={(props) => <FunCounter name="hello" {...props} />}
+				/>
 				<Route path="/persons/new" exact component={PersonForm} />
 				<Route path="/persons/update/:id" exact component={PersonForm} />
 				<Route path="/persons/" component={Persons} />
 				<Route path="/person/:id?" component={Person} />
 				<Route path="/counter" component={Counter} />
-				<Route path="/" component={Home} />
+				<Route path="/home" component={Home} />
+				<Route path="/page-not-found" component={NotFound} />
+				<Redirect from="/" to="page-not-found" />
 			</Switch>
 		</div>
 	);
