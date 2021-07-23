@@ -52,6 +52,9 @@ code {
 .error-red {
 	border: 2px solid red !important;
 }
+a {
+	text-decoration: none !important;
+}
 
 ul {
 	list-style: none;
@@ -76,8 +79,11 @@ ul {
 	height: 95vh;
 	display: flex;
 	flex-direction: column;
-	background-color: indianred;
+	background-color: #303456;
 }
 .sidebar-links {
 	margin-bottom: 20px;
+}
+.sidebar-links.active {
+	background-color: #ea5179;
 }

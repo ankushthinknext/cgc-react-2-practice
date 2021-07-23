@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -12,19 +12,8 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-
-function Copyright() {
-	return (
-		<Typography variant="body2" color="textSecondary" align="center">
-			{"Copyright © "}
-			<Link color="inherit" href="https://material-ui.com/">
-				Your Website
-			</Link>{" "}
-			{new Date().getFullYear()}
-			{"."}
-		</Typography>
-	);
-}
+import Joi, { errors } from "joi-browser";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -59,8 +48,50 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Login() {
+export default function Login(props) {
 	const classes = useStyles();
+	const [formData, setFormData] = useState({});
+	const [error, setError] = useState([]);
+	const [info, setInfo] = useState("");
+
+	const handleFormChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
+	const loginSchema = {
+		username: Joi.string().required().min(8).max(30),
+		password: Joi.string().required().min(7).max(30),
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		let validate = Joi.validate(formData, loginSchema);
+		console.log(validate);
+		if (validate.error) {
+			setError(validate.error.details);
+			return;
+		}
+		async function attemptLogin() {
+			let result = await fetch(
+				"https://cashie-backend.herokuapp.com/api/auth/login",
+				{
+					method: "POST",
+					body: JSON.stringify(formData),
+					headers: {
+						"Content-type": "application/json",
+					},
+				},
+			);
+			let data = await result.json();
+			if (data.status === "success") {
+				setInfo("Login successfull...");
+				localStorage.setItem("token", data.token);
+				props.history.push("/dashboard");
+			} else {
+				setError([{ message: "Authentication failed" }]);
+			}
+		}
+		attemptLogin();
+	};
 
 	return (
 		<Grid container component="main" className={classes.root}>
@@ -71,7 +102,15 @@ export default function Login() {
 					<Typography component="h1" variant="h5">
 						Login
 					</Typography>
-					<form className={classes.form} noValidate>
+					{error.length !== true &&
+						error.map((er) => <Alert severity="error">{er.message}</Alert>)}
+					{info && <Alert severity="success">{info}</Alert>}
+
+					<form
+						onSubmit={handleSubmit}
+						onChange={handleFormChange}
+						className={classes.form}
+						noValidate>
 						<TextField
 							variant="outlined"
 							margin="normal"

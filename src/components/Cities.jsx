@@ -15,6 +15,7 @@ export default class Cities extends Component {
 		newCities = newCities.filter((i) => i !== city);
 		this.setState({ cities: newCities });
 	};
+
 	render() {
 		return (
 			<div>

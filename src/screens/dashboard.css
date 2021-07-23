@@ -6,5 +6,5 @@
 	background-color: indianred;
 }
 .main-area {
-	justify-self: stretch;
+	flex-grow: 1;
 }
