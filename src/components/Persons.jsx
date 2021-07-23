@@ -123,7 +123,7 @@ function Persons(props) {
 						placeholder="Search the users"
 					/>
 				</div>
-				<Link to="/persons/new">
+				<Link to={`${props.match.path}/new`}>
 					<button className="btn btn-primary ml-auto">New Person +</button>
 				</Link>
 

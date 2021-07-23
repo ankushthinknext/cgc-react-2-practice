@@ -16,12 +16,14 @@ import Home from "./components/Home";
 import Person from "./components/Person";
 import NotFound from "./components/NotFound";
 import Dashboard from "./screens/Dashboard";
+import Login from "./components/Login";
 
 function App() {
 	return (
 		<div className="App">
 			<Switch>
 				<Route path="/dashboard" component={Dashboard}></Route>
+				<Route path="/login" component={Login}></Route>
 				<Route
 					path="/cities"
 					render={(props) => <FunCounter name="hello" {...props} />}

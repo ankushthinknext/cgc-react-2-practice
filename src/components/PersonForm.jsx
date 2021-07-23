@@ -11,12 +11,12 @@ export default function PersonForm(props) {
 	const formSchema = {
 		name: Joi.string().required().max(30).min(5),
 		email: Joi.string().email({ minDomainAtoms: 2 }).required().max(30).min(8),
-		age: Joi.number().max(120).min(10),
+		age: Joi.string().required(),
 	};
 
 	const handleFormChange = (e) => {
 		let validationResult = Joi.validate(formData, formSchema);
-		setErrors(validationResult.error.details);
+		validationResult.error && setErrors(validationResult.error.details);
 		let newFormData = { ...formData };
 		newFormData[e.target.name] = e.target.value;
 
@@ -42,7 +42,7 @@ export default function PersonForm(props) {
 		let validationResult = Joi.validate(formData, formSchema, {
 			abortEarly: false,
 		});
-		setErrors(validationResult.error.details);
+		validationResult.error && setErrors(validationResult.error.details);
 		const createUser = async () => {
 			let result = await fetch(
 				"https://60efff36f587af00179d3c01.mockapi.io/persons",

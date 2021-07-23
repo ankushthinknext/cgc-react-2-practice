@@ -5,3 +5,6 @@
 	width: 150px;
 	background-color: indianred;
 }
+.main-area {
+	justify-self: stretch;
+}
