@@ -23,7 +23,7 @@ const sidebarLinks = [
 		label: "Users",
 		classes: [],
 		icon: <PeopleIcon />,
-		path: "/persons",
+		path: "/users",
 	},
 	{
 		id: 4,

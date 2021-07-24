@@ -8,3 +8,31 @@
 .main-area {
 	flex-grow: 1;
 }
+
+.d-cards {
+	height: 100px;
+	margin: 10px;
+	padding: 10px;
+	color: white !important;
+}
+.d-card-maroon {
+	background: linear-gradient(
+		16deg,
+		rgba(234, 81, 121, 1) 0%,
+		rgba(172, 54, 115, 1) 100%
+	);
+}
+.d-card-indigo {
+	background: linear-gradient(
+		16deg,
+		rgba(195, 84, 215, 1) 0%,
+		rgba(136, 74, 206, 1) 100%
+	);
+}
+.d-card-orange {
+	background: linear-gradient(
+		16deg,
+		rgba(245, 90, 158, 1) 0%,
+		rgba(255, 155, 106, 1) 100%
+	);
+}

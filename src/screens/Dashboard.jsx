@@ -10,6 +10,8 @@ import Products from "../components/Products";
 import Categories from "../components/Categories";
 import Transactions from "../components/Transactions";
 import DashboardPanel from "../components/DashboardPanel";
+import Users from "../components/Users";
+import UserForm from "../components/UserForm";
 
 function Dashboard(props) {
 	return (
@@ -23,12 +25,16 @@ function Dashboard(props) {
 				</div>
 				<div className="main-area">
 					<Switch>
-						<Route path={`${props.match.path}/`} component={DashboardPanel} />
 						<Route
 							path={`${props.match.path}/persons/new`}
 							component={PersonForm}
 						/>
-						<Route path={`${props.match.path}/persons`} component={Persons} />
+						<Route
+							exact
+							path={`${props.match.path}/users/new`}
+							component={UserForm}
+						/>
+						<Route exact path={`${props.match.path}/users`} component={Users} />
 						<Route path={`${props.match.path}/products`} component={Products} />
 						<Route
 							path={`${props.match.path}/transactions`}
@@ -38,6 +44,7 @@ function Dashboard(props) {
 							path={`${props.match.path}/categories`}
 							component={Categories}
 						/>
+						<Route path={`${props.match.path}/`} component={DashboardPanel} />
 					</Switch>
 				</div>
 			</div>
