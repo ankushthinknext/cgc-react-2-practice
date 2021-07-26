@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default function UserForm(props) {
 	const [formData, setFormData] = useState({});
 	const [errors, setErrors] = useState(null);
+	const [method, setMethod] = useState("POST");
 	const classes = useStyles();
 	const handleFormChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,7 +43,10 @@ export default function UserForm(props) {
 					`${process.env.REACT_APP_BACKEND_API_URL}user/${props.match.params.id}`,
 				)
 				.then((result) => {
-					result.data.status === "success" && setFormData(result.data.data);
+					if (result.data.status === "success") {
+						setFormData(result.data.data);
+						setMethod("PUT");
+					}
 				});
 	}, []);
 
@@ -63,12 +67,19 @@ export default function UserForm(props) {
 		}
 
 		//make post request to server
-		axios
-			.post(`${process.env.REACT_APP_BACKEND_API_URL}user`, formData)
+		axios({
+			method,
+			url: `${process.env.REACT_APP_BACKEND_API_URL}${
+				method === "PUT" ? "user/" + props.match.params.id : "user"
+			}`,
+			data: formData,
+		})
 			.then((result) => {
 				if (result.status === 200) {
 					setErrors(null);
-					Swal.fire("User created successfully...");
+					Swal.fire(
+						`User ${method === "PUT" ? "updated" : "created"} successfully...`,
+					);
 					props.history.goBack();
 				} else {
 					Swal.fire("Error", "Somethings went wrong", "error");
@@ -97,7 +108,7 @@ export default function UserForm(props) {
 									variant="outlined"
 									fullWidth
 									id="firstName"
-									label="Full Name"
+									placeholder="Full Name"
 									value={formData && formData.fullname}
 									autoFocus
 								/>
@@ -113,7 +124,7 @@ export default function UserForm(props) {
 									variant="outlined"
 									fullWidth
 									id="lastName"
-									label="User name"
+									placeholder="User name"
 									name="username"
 									autoComplete="lname"
 									value={formData && formData.username}
@@ -132,7 +143,7 @@ export default function UserForm(props) {
 									variant="outlined"
 									fullWidth
 									id="firstName"
-									label="Email"
+									placeholder="Email"
 									autoFocus
 									value={formData && formData.email}
 								/>
@@ -150,10 +161,9 @@ export default function UserForm(props) {
 									variant="outlined"
 									fullWidth
 									id="firstName"
-									label="Password"
+									placeholder="Password"
 									type="password"
 									value={formData && formData.password}
-									autoFocus
 								/>
 								{errors &&
 									errors
@@ -165,19 +175,23 @@ export default function UserForm(props) {
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<FormControl variant="outlined" fullWidth className="mt-3">
-								<InputLabel htmlFor="outlined-age-native-simple">
-									Role
-								</InputLabel>
 								<Select
 									native
-									label="Age"
+									placeholder="Role"
 									inputProps={{
 										name: "role",
 										id: "outlined-age-native-simple",
+										shrink: false,
 									}}>
 									<option aria-label="None" value="" />
-									<option value="Admin">Admin</option>
-									<option value="Cashier">Cahier</option>
+									<option selected={formData.role === "admin"} value="admin">
+										Admin
+									</option>
+									<option
+										selected={formData.role === "cashier"}
+										value="cashier">
+										Cahier
+									</option>
 								</Select>
 								{errors &&
 									errors
@@ -193,7 +207,7 @@ export default function UserForm(props) {
 							size="large"
 							color="primary"
 							className="c-btn mt-5">
-							Submit
+							{method === "POST" ? "Create User" : "Update User"}
 						</Button>
 					</form>
 				</div>

@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import queryString from "query-string";
-import { Chip, Container, Grid, Paper, Button } from "@material-ui/core";
+import {
+	Chip,
+	Container,
+	Grid,
+	Paper,
+	Button,
+	InputAdornment,
+	TextField,
+	FormControl,
+	Select,
+	Box,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -14,6 +25,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import SearchIcon from "@material-ui/icons/Search";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles({
 	table: {},
@@ -36,7 +49,7 @@ function Users(props) {
 				query,
 			)}`,
 		).then((result) => setUsers(result.data.data.users));
-	}, [refresh]);
+	}, [refresh, query]);
 
 	const handleDelete = (id) => {
 		Swal.fire({
@@ -64,6 +77,11 @@ function Users(props) {
 		});
 	};
 
+	const handleQueryChange = (e) => {
+		setUsers(null);
+		setQuery({ ...query, [e.target.name]: e.target.value });
+	};
+	console.log(query);
 	console.log(users);
 	return (
 		<div>
@@ -74,6 +92,56 @@ function Users(props) {
 							New User
 						</Button>
 					</Link>
+				</Grid>
+				<Grid container justifyContent="flex-end" className="my-3">
+					<form onChange={handleQueryChange}>
+						<TextField
+							placeholder="Search..."
+							id="outlined-start-adornment"
+							className=""
+							name="keyword"
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">
+										<SearchIcon />
+									</InputAdornment>
+								),
+							}}
+							variant="outlined"
+						/>
+						<FormControl variant="outlined">
+							<Select
+								native
+								label="Role"
+								placeholder="Role"
+								inputProps={{
+									name: "role",
+									shrink: false,
+								}}>
+								<option aria-label="None" value="" />
+								<option value="all">All</option>
+								<option value="admin">Admin</option>
+								<option value="cashier">Cahier</option>
+							</Select>
+						</FormControl>
+						<FormControl variant="outlined">
+							<Select
+								native
+								placeholder="Role"
+								inputProps={{
+									name: "sort",
+
+									id: "outlined-age-native-simple",
+									shrink: false,
+								}}>
+								<option aria-label="None" value="" />
+								<option value="Newest">Newest</option>
+								<option value="Oldest">Oldest</option>
+								<option value="Name">Name</option>
+								<option value="Last Active">Last Active</option>
+							</Select>
+						</FormControl>
+					</form>
 				</Grid>
 				<Grid container>
 					<Grid item xs={12}>
@@ -89,7 +157,7 @@ function Users(props) {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{users &&
+									{users ? (
 										users.map((user) => (
 											<TableRow key={user._id}>
 												<TableCell component="th" scope="user">
@@ -114,7 +182,12 @@ function Users(props) {
 													<DeleteIcon onClick={() => handleDelete(user._id)} />
 												</TableCell>
 											</TableRow>
-										))}
+										))
+									) : (
+										<Box style={{ width: "100%" }}>
+											<LinearProgress />
+										</Box>
+									)}
 								</TableBody>
 							</Table>
 						</Paper>
