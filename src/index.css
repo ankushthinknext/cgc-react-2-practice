@@ -87,3 +87,14 @@ ul {
 .sidebar-links.active {
 	background-color: #ea5179;
 }
+.c-btn {
+	color: #ffffff;
+	background: linear-gradient(
+		45deg,
+		rgba(234, 81, 121, 1) 0%,
+		rgba(172, 54, 115, 1) 100%
+	);
+}
+.form-errors {
+	color: red !important;
+}

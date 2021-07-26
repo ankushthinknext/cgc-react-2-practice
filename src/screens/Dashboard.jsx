@@ -26,8 +26,8 @@ function Dashboard(props) {
 				<div className="main-area">
 					<Switch>
 						<Route
-							path={`${props.match.path}/persons/new`}
-							component={PersonForm}
+							path={`${props.match.path}/users/update/:id?`}
+							component={UserForm}
 						/>
 						<Route
 							exact

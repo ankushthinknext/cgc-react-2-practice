@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -12,106 +12,192 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { FormControl, Select, InputLabel, Paper } from "@material-ui/core";
+import Joi from "joi-browser";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
-	paper: {
-		marginTop: theme.spacing(8),
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-
 	form: {
 		width: "100%", // Fix IE 11 issue.
 		marginTop: theme.spacing(3),
+		padding: "20px",
 	},
 	submit: {
 		margin: theme.spacing(3, 0, 2),
 	},
 }));
 
-export default function UserForm() {
+export default function UserForm(props) {
+	const [formData, setFormData] = useState({});
+	const [errors, setErrors] = useState(null);
 	const classes = useStyles();
+	const handleFormChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
+	useEffect(() => {
+		props.match.params.id &&
+			axios
+				.get(
+					`${process.env.REACT_APP_BACKEND_API_URL}user/${props.match.params.id}`,
+				)
+				.then((result) => {
+					result.data.status === "success" && setFormData(result.data.data);
+				});
+	}, []);
+
+	const formSchema = {
+		fullname: Joi.string().required().min(7).max(30),
+		username: Joi.string().required().min(7).max(30),
+		email: Joi.string().email().required().min(7).max(30),
+		password: Joi.string().required().min(7).max(30),
+		role: Joi.string().required(),
+	};
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		//validate the request
+		let validation = Joi.validate(formData, formSchema, { abortEarly: false });
+		if (validation.error) {
+			setErrors(validation.error.details);
+			return;
+		}
+
+		//make post request to server
+		axios
+			.post(`${process.env.REACT_APP_BACKEND_API_URL}user`, formData)
+			.then((result) => {
+				if (result.status === 200) {
+					setErrors(null);
+					Swal.fire("User created successfully...");
+					props.history.goBack();
+				} else {
+					Swal.fire("Error", "Somethings went wrong", "error");
+				}
+			})
+			.catch((err) => {
+				Swal.fire("Error", "Somethings went wrong", "error");
+			});
+	};
+	console.log(errors);
+	console.log(formData);
 
 	return (
-		<Container component="main">
-			<CssBaseline />
-			<div className={classes.paper}>
-				<form className={classes.form} noValidate>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								autoComplete="fname"
-								name="firstName"
-								variant="outlined"
-								required
-								fullWidth
-								id="firstName"
-								label="Full Name"
-								autoFocus
-							/>
+		<Container>
+			<Paper>
+				<div className={classes.paper}>
+					<form
+						onSubmit={handleSubmit}
+						onChange={handleFormChange}
+						className={classes.form}>
+						<Grid container spacing={2}>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									autoComplete="fname"
+									name="fullname"
+									variant="outlined"
+									fullWidth
+									id="firstName"
+									label="Full Name"
+									value={formData && formData.fullname}
+									autoFocus
+								/>
+								{errors &&
+									errors
+										.filter((err) => err.context.key === "fullname")
+										.map((error) => (
+											<p className="form-errors">{error.message}</p>
+										))}
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									variant="outlined"
+									fullWidth
+									id="lastName"
+									label="User name"
+									name="username"
+									autoComplete="lname"
+									value={formData && formData.username}
+								/>
+								{errors &&
+									errors
+										.filter((err) => err.context.key === "username")
+										.map((error) => (
+											<p className="form-errors">{error.message}</p>
+										))}
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									autoComplete="fname"
+									name="email"
+									variant="outlined"
+									fullWidth
+									id="firstName"
+									label="Email"
+									autoFocus
+									value={formData && formData.email}
+								/>
+								{errors &&
+									errors
+										.filter((err) => err.context.key === "email")
+										.map((error) => (
+											<p className="form-errors">{error.message}</p>
+										))}
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									autoComplete="fname"
+									name="password"
+									variant="outlined"
+									fullWidth
+									id="firstName"
+									label="Password"
+									type="password"
+									value={formData && formData.password}
+									autoFocus
+								/>
+								{errors &&
+									errors
+										.filter((err) => err.context.key === "password")
+										.map((error) => (
+											<p className="form-errors">{error.message}</p>
+										))}
+							</Grid>
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField
-								variant="outlined"
-								required
-								fullWidth
-								id="lastName"
-								label="User name"
-								name="lastName"
-								autoComplete="lname"
-							/>
+							<FormControl variant="outlined" fullWidth className="mt-3">
+								<InputLabel htmlFor="outlined-age-native-simple">
+									Role
+								</InputLabel>
+								<Select
+									native
+									label="Age"
+									inputProps={{
+										name: "role",
+										id: "outlined-age-native-simple",
+									}}>
+									<option aria-label="None" value="" />
+									<option value="Admin">Admin</option>
+									<option value="Cashier">Cahier</option>
+								</Select>
+								{errors &&
+									errors
+										.filter((err) => err.context.key === "role")
+										.map((error) => (
+											<p className="form-errors">{error.message}</p>
+										))}
+							</FormControl>
 						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								autoComplete="fname"
-								name="firstName"
-								variant="outlined"
-								required
-								fullWidth
-								id="firstName"
-								label="Email"
-								autoFocus
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								autoComplete="fname"
-								name="firstName"
-								variant="outlined"
-								required
-								fullWidth
-								id="firstName"
-								label="Password"
-								type="password"
-								autoFocus
-							/>
-						</Grid>
-
-						<Grid item xs={12}>
-							<FormControlLabel
-								control={<Checkbox value="allowExtraEmails" color="primary" />}
-								label="I want to receive inspiration, marketing promotions and updates via email."
-							/>
-						</Grid>
-					</Grid>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}>
-						Sign Up
-					</Button>
-					<Grid container justifyContent="flex-end">
-						<Grid item>
-							<Link href="#" variant="body2">
-								Already have an account? Sign in
-							</Link>
-						</Grid>
-					</Grid>
-				</form>
-			</div>
+						<Button
+							type="submit"
+							variant="contained"
+							size="large"
+							color="primary"
+							className="c-btn mt-5">
+							Submit
+						</Button>
+					</form>
+				</div>
+			</Paper>
 		</Container>
 	);
 }
