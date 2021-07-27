@@ -17,6 +17,7 @@ import Joi from "joi-browser";
 import Swal from "sweetalert2";
 import axios from "axios";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import PhotoIcon from "@material-ui/icons/Photo";
 
 const useStyles = makeStyles((theme) => ({
 	form: {
@@ -29,10 +30,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function UserForm(props) {
+export default function ProductForm(props) {
 	const [formData, setFormData] = useState({});
 	const [errors, setErrors] = useState(null);
 	const [method, setMethod] = useState("POST");
+	const [categories, setCategories] = useState(null);
+	const [productImage, setProductImage] = useState(null);
 	const classes = useStyles();
 	const handleFormChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,22 +44,33 @@ export default function UserForm(props) {
 		props.match.params.id &&
 			axios
 				.get(
-					`${process.env.REACT_APP_BACKEND_API_URL}user/${props.match.params.id}`,
+					`${process.env.REACT_APP_BACKEND_API_URL}product/${props.match.params.id}`,
 				)
 				.then((result) => {
 					if (result.data.status === "success") {
-						setFormData(result.data.data);
+						let { name, price, description, image } = result.data.data;
+						setFormData({ ...formData, name, price, description, image });
+
+						// setFormData(result.data.data);
 						setMethod("PUT");
 					}
 				});
 	}, []);
 
+	useEffect(() => {
+		axios(`${process.env.REACT_APP_BACKEND_API_URL}category`).then((result) =>
+			setCategories(result.data.data.categories),
+		);
+	}, []);
+
 	const formSchema = {
-		fullname: Joi.string().required().min(7).max(30),
-		username: Joi.string().required().min(7).max(30),
-		email: Joi.string().email().required().min(7).max(30),
-		password: Joi.string().required().min(7).max(30),
-		role: Joi.string().required(),
+		name: Joi.string().required().min(3).max(50),
+		price: Joi.number().required().max(1000000000000),
+		description: Joi.string().required().min(7).max(500),
+		category: Joi.string().required().min(7).max(30),
+		location: Joi.string(),
+		_id: Joi.string(),
+		image: Joi.string(),
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -67,19 +81,31 @@ export default function UserForm(props) {
 			return;
 		}
 
+		//if form data contains files
+		let i = new FormData();
+		for (let x in formData) i.append(x, formData[x]);
+
+		//image exist we will append thats to From data
+		productImage && i.append("image", productImage);
+
 		//make post request to server
 		axios({
 			method,
 			url: `${process.env.REACT_APP_BACKEND_API_URL}${
-				method === "PUT" ? "user/" + props.match.params.id : "user"
+				method === "PUT" ? "product/" + props.match.params.id : "product"
 			}`,
-			data: formData,
+			data: i,
+			headers: {
+				"Content-type": "multipart/formData",
+			},
 		})
 			.then((result) => {
 				if (result.status === 200) {
 					setErrors(null);
 					Swal.fire(
-						`User ${method === "PUT" ? "updated" : "created"} successfully...`,
+						`Product ${
+							method === "PUT" ? "updated" : "created"
+						} successfully...`,
 					);
 					props.history.goBack();
 				} else {
@@ -90,8 +116,15 @@ export default function UserForm(props) {
 				Swal.fire("Error", "Somethings went wrong", "error");
 			});
 	};
+
+	const handleUpload = (e) => {
+		let fileReader = new FileReader();
+		fileReader.readAsDataURL(e.target.files[0]);
+		fileReader.onload = function (fileEvent) {
+			setProductImage(fileEvent.target.result);
+		};
+	};
 	console.log(errors);
-	console.log(formData);
 
 	return (
 		<Container>
@@ -109,18 +142,17 @@ export default function UserForm(props) {
 						<Grid container spacing={2}>
 							<Grid item xs={12} sm={6}>
 								<TextField
-									autoComplete="fname"
-									name="fullname"
+									name="name"
 									variant="outlined"
 									fullWidth
 									id="firstName"
-									placeholder="Full Name"
-									value={formData && formData.fullname}
+									placeholder="Product Name"
+									value={formData && formData.name}
 									autoFocus
 								/>
 								{errors &&
 									errors
-										.filter((err) => err.context.key === "fullname")
+										.filter((err) => err.context.key === "name")
 										.map((error) => (
 											<p className="form-errors">{error.message}</p>
 										))}
@@ -129,83 +161,88 @@ export default function UserForm(props) {
 								<TextField
 									variant="outlined"
 									fullWidth
-									id="lastName"
-									placeholder="User name"
-									name="username"
-									autoComplete="lname"
-									value={formData && formData.username}
+									type="number"
+									placeholder="Price"
+									name="price"
+									value={formData && formData.price}
 								/>
 								{errors &&
 									errors
-										.filter((err) => err.context.key === "username")
+										.filter((err) => err.context.key === "price")
 										.map((error) => (
 											<p className="form-errors">{error.message}</p>
 										))}
 							</Grid>
-							<Grid item xs={12} sm={6}>
+							<Grid item xs={12}>
 								<TextField
 									autoComplete="fname"
-									name="email"
+									name="description"
 									variant="outlined"
 									fullWidth
+									multiline
+									rows={3}
 									id="firstName"
-									placeholder="Email"
+									placeholder="Product description"
 									autoFocus
-									value={formData && formData.email}
+									value={formData && formData.description}
 								/>
 								{errors &&
 									errors
-										.filter((err) => err.context.key === "email")
-										.map((error) => (
-											<p className="form-errors">{error.message}</p>
-										))}
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									autoComplete="fname"
-									name="password"
-									variant="outlined"
-									fullWidth
-									id="firstName"
-									placeholder="Password"
-									type="password"
-									value={formData && formData.password}
-								/>
-								{errors &&
-									errors
-										.filter((err) => err.context.key === "password")
+										.filter((err) => err.context.key === "description")
 										.map((error) => (
 											<p className="form-errors">{error.message}</p>
 										))}
 							</Grid>
 						</Grid>
-						<Grid item xs={12} sm={6}>
+						<Grid item xs={12}>
 							<FormControl variant="outlined" fullWidth className="mt-3">
 								<Select
 									native
-									placeholder="Role"
+									placeholder="Category"
 									inputProps={{
-										name: "role",
+										name: "category",
 										id: "outlined-age-native-simple",
 										shrink: false,
 									}}>
 									<option aria-label="None" value="" />
-									<option selected={formData.role === "admin"} value="admin">
-										Admin
-									</option>
-									<option
-										selected={formData.role === "cashier"}
-										value="cashier">
-										Cahier
-									</option>
+									{categories &&
+										categories.map((category) => (
+											<option key={category._id} value={category._id}>
+												{category.name}
+											</option>
+										))}
 								</Select>
 								{errors &&
 									errors
-										.filter((err) => err.context.key === "role")
+										.filter((err) => err.context.key === "category")
 										.map((error) => (
 											<p className="form-errors">{error.message}</p>
 										))}
 							</FormControl>
+						</Grid>
+						<Grid container justifyContent="flex-start" className="my-3">
+							<label htmlFor="icon-button-file">
+								<Button
+									variant="contained"
+									className="c-btn"
+									color="primary"
+									component="span">
+									<PhotoIcon /> &nbsp; Upload Image
+								</Button>
+							</label>
+							<input
+								onChange={handleUpload}
+								name="location"
+								accept="image/*"
+								className="d-none"
+								id="icon-button-file"
+								type="file"
+							/>
+							{(productImage || formData.image) && (
+								<img
+									style={{ width: "200px", marginLeft: "100px" }}
+									src={productImage ? productImage : formData.image}></img>
+							)}
 						</Grid>
 						<Button
 							type="submit"
@@ -213,7 +250,7 @@ export default function UserForm(props) {
 							size="large"
 							color="primary"
 							className="c-btn mt-5">
-							{method === "POST" ? "Create User" : "Update User"}
+							{method === "POST" ? "Create Product" : "Update Product"}
 						</Button>
 					</form>
 				</div>

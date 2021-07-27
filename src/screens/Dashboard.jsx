@@ -12,6 +12,7 @@ import Transactions from "../components/Transactions";
 import DashboardPanel from "../components/DashboardPanel";
 import Users from "../components/Users";
 import UserForm from "../components/UserForm";
+import ProductForm from "../components/ProductForm";
 
 function Dashboard(props) {
 	return (
@@ -35,6 +36,14 @@ function Dashboard(props) {
 							component={UserForm}
 						/>
 						<Route exact path={`${props.match.path}/users`} component={Users} />
+						<Route
+							path={`${props.match.path}/products/new`}
+							component={ProductForm}
+						/>
+						<Route
+							path={`${props.match.path}/products/update/:id?`}
+							component={ProductForm}
+						/>
 						<Route path={`${props.match.path}/products`} component={Products} />
 						<Route
 							path={`${props.match.path}/transactions`}

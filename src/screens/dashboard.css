@@ -7,6 +7,9 @@
 }
 .main-area {
 	flex-grow: 1;
+	height: 95vh;
+	overflow-y: auto;
+	background-color: rgb(252, 248, 249);
 }
 
 .d-cards {

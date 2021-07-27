@@ -184,7 +184,7 @@ function Users(props) {
 											</TableRow>
 										))
 									) : (
-										<Box style={{ width: "100%" }}>
+										<Box item sm={6} style={{ width: "100%" }}>
 											<LinearProgress />
 										</Box>
 									)}
