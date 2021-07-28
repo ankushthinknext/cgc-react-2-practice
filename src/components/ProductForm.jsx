@@ -48,8 +48,21 @@ export default function ProductForm(props) {
 				)
 				.then((result) => {
 					if (result.data.status === "success") {
-						let { name, price, description, image } = result.data.data;
-						setFormData({ ...formData, name, price, description, image });
+						let {
+							name,
+							price,
+							description,
+							image: hidden,
+							category,
+						} = result.data.data;
+						setFormData({
+							...formData,
+							name,
+							price,
+							description,
+							hidden,
+							category,
+						});
 
 						// setFormData(result.data.data);
 						setMethod("PUT");
@@ -68,9 +81,8 @@ export default function ProductForm(props) {
 		price: Joi.number().required().max(1000000000000),
 		description: Joi.string().required().min(7).max(500),
 		category: Joi.string().required().min(7).max(30),
-		location: Joi.string(),
-		_id: Joi.string(),
-		image: Joi.string(),
+
+		hidden: Joi.string(),
 	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -83,7 +95,11 @@ export default function ProductForm(props) {
 
 		//if form data contains files
 		let i = new FormData();
-		for (let x in formData) i.append(x, formData[x]);
+		for (let x in formData) {
+			if (x === "price") {
+				i.append("price", +formData[x]);
+			} else i.append(x, formData[x]);
+		}
 
 		//image exist we will append thats to From data
 		productImage && i.append("image", productImage);
@@ -207,7 +223,10 @@ export default function ProductForm(props) {
 									<option aria-label="None" value="" />
 									{categories &&
 										categories.map((category) => (
-											<option key={category._id} value={category._id}>
+											<option
+												selected={formData.category === category._id}
+												key={category._id}
+												value={category._id}>
 												{category.name}
 											</option>
 										))}
@@ -232,16 +251,16 @@ export default function ProductForm(props) {
 							</label>
 							<input
 								onChange={handleUpload}
-								name="location"
+								name="hidden"
 								accept="image/*"
 								className="d-none"
 								id="icon-button-file"
 								type="file"
 							/>
-							{(productImage || formData.image) && (
+							{(productImage || formData.hidden) && (
 								<img
 									style={{ width: "200px", marginLeft: "100px" }}
-									src={productImage ? productImage : formData.image}></img>
+									src={productImage ? productImage : formData.hidden}></img>
 							)}
 						</Grid>
 						<Button

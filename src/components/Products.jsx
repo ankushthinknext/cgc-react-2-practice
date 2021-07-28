@@ -121,21 +121,7 @@ function Products(props) {
 							}}
 							variant="outlined"
 						/>
-						<FormControl variant="outlined">
-							<Select
-								native
-								label="Role"
-								placeholder="Role"
-								inputProps={{
-									name: "role",
-									shrink: false,
-								}}>
-								<option aria-label="None" value="" />
-								<option value="all">All</option>
-								<option value="admin">Admin</option>
-								<option value="cashier">Cahier</option>
-							</Select>
-						</FormControl>
+
 						<FormControl variant="outlined">
 							<Select
 								native
@@ -150,7 +136,8 @@ function Products(props) {
 								<option value="Newest">Newest</option>
 								<option value="Oldest">Oldest</option>
 								<option value="Name">Name</option>
-								<option value="Last Active">Last Active</option>
+								<option value="Highest to Lowest">Highest to Lowest</option>
+								<option value="Lowest to Highest">Lowest to Highest</option>
 							</Select>
 						</FormControl>
 					</form>
