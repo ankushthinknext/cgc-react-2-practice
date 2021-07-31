@@ -17,14 +17,14 @@ import ProductForm from "../components/ProductForm";
 function Dashboard(props) {
 	return (
 		<React.Fragment>
-			<div className="first-row">
-				<Header />
-			</div>
 			<div className="content">
 				<div className="sidebar-wrap">
 					<Sidebar />
 				</div>
 				<div className="main-area">
+					<div className="first-row">
+						<Header />
+					</div>
 					<Switch>
 						<Route
 							path={`${props.match.path}/users/update/:id?`}

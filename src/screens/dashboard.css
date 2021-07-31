@@ -2,12 +2,11 @@
 	display: flex;
 }
 .sidebar-wrap {
-	width: 150px;
-	background-color: indianred;
+	width: 100px;
 }
 .main-area {
 	flex-grow: 1;
-	height: 95vh;
+	height: 100vh;
 	overflow-y: auto;
 	background-color: rgb(252, 248, 249);
 }

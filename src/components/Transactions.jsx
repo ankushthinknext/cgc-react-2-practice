@@ -208,7 +208,11 @@ function Transactions() {
 									<TabPanel value={value} index={index}>
 										<div className={classes.cardWrapper}>
 											{category.items.map((product) => (
-												<Card className={classes.productCard}>
+												<Card
+													onClick={() =>
+														cartDetails.updateCartItems(product._id)
+													}
+													className={classes.productCard}>
 													<CardActionArea>
 														<CardMedia
 															component="img"
