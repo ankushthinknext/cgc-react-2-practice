@@ -72,7 +72,7 @@ export default function Login(props) {
 		}
 		async function attemptLogin() {
 			let result = await fetch(
-				"https://cashie-backend.herokuapp.com/api/auth/login",
+				`${process.env.REACT_APP_BACKEND_API_URL}auth/login`,
 				{
 					method: "POST",
 					body: JSON.stringify(formData),

@@ -49,6 +49,11 @@ function Products(props) {
 			`${process.env.REACT_APP_BACKEND_API_URL}product?${queryString.stringify(
 				query,
 			)}`,
+			{
+				headers: {
+					authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+			},
 		).then((result) => setProducts(result.data.data.products));
 	}, [refresh, query]);
 
@@ -67,7 +72,11 @@ function Products(props) {
 				let filtered = productCopy.filter((product) => product._id !== id);
 				setProducts(filtered);
 				axios
-					.delete(`${process.env.REACT_APP_BACKEND_API_URL}product/${id}`)
+					.delete(`${process.env.REACT_APP_BACKEND_API_URL}product/${id}`, {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
+					})
 					.then((result) => {
 						if (result.data.status === "success") {
 							Swal.fire(

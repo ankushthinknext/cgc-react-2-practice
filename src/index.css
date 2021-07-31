@@ -88,7 +88,7 @@ ul {
 	background-color: #ea5179;
 }
 .c-btn {
-	color: #ffffff;
+	color: #ffffff !important;
 	background: linear-gradient(
 		45deg,
 		rgba(234, 81, 121, 1) 0%,

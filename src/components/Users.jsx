@@ -44,11 +44,15 @@ function Users(props) {
 	const [refresh, setRefresh] = useState(false);
 
 	useEffect(() => {
-		axios(
-			`${process.env.REACT_APP_BACKEND_API_URL}user?${queryString.stringify(
-				query,
-			)}`,
-		).then((result) => setUsers(result.data.data.users));
+		let URL = `${
+			process.env.REACT_APP_BACKEND_API_URL
+		}user?${queryString.stringify(query)}`;
+		axios({
+			url: URL,
+			headers: {
+				authorization: `Bearer ${localStorage.getItem("token")}`,
+			},
+		}).then((result) => setUsers(result.data.data.users));
 	}, [refresh, query]);
 
 	const handleDelete = (id) => {
