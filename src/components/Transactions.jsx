@@ -28,6 +28,7 @@ import TableRow from "@material-ui/core/TableRow";
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ReciptModal from "./ReceiptModal";
 
 function a11yProps(index) {
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
 	productCard: {
 		width: "30%",
 		marginTop: "15px",
+		position: "relative",
 	},
 	productsWrapper: {
 		height: "85vh",
@@ -110,7 +112,6 @@ function Transactions() {
 		setAllProducts(result.data.data.all);
 		setProductCategories(result.data.data.categories);
 	}
-	console.log(cartDetails);
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
@@ -172,6 +173,24 @@ function Transactions() {
 											<Card
 												onClick={() => cartDetails.updateCartItems(product._id)}
 												className={classes.productCard}>
+												<div
+													className={`m-overlay ${
+														cartDetails.cartItems.find(
+															(i) => i._id === product._id,
+														)
+															? "active"
+															: ""
+													}`}></div>
+												<CheckCircleIcon
+													className={`m-selected ${
+														cartDetails.cartItems.find(
+															(i) => i._id === product._id,
+														)
+															? "active"
+															: ""
+													}`}
+												/>
+
 												<CardActionArea>
 													<CardMedia
 														component="img"
@@ -213,6 +232,24 @@ function Transactions() {
 														cartDetails.updateCartItems(product._id)
 													}
 													className={classes.productCard}>
+													<div
+														className={`m-overlay ${
+															cartDetails.cartItems.find(
+																(i) => i._id === product._id,
+															)
+																? "active"
+																: ""
+														}`}></div>
+													<CheckCircleIcon
+														className={`m-selected ${
+															cartDetails.cartItems.find(
+																(i) => i._id === product._id,
+															)
+																? "active"
+																: ""
+														}`}
+													/>
+
 													<CardActionArea>
 														<CardMedia
 															component="img"
@@ -220,6 +257,7 @@ function Transactions() {
 															height="140"
 															image={product.image}
 														/>
+
 														<CardContent>
 															<Typography
 																gutterBottom

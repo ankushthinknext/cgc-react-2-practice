@@ -2,7 +2,7 @@
 	display: flex;
 }
 .sidebar-wrap {
-	width: 100px;
+	width: 110px;
 }
 .main-area {
 	flex-grow: 1;
